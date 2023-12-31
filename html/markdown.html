@@ -13,6 +13,9 @@ data:text/html;charset=utf-8,
             code {
                 color: whitesmoke;
             }
+            img {
+                max-width: 90dvh;
+            }
             body > main {
                 display: flex;
                 margin: 0;
@@ -46,9 +49,53 @@ data:text/html;charset=utf-8,
             <output></output>
         </main>
         <script>
+            const images = [];
+
             onbeforeunload = () => true;
+
+            const imagePlaceholder = (number) => {
+                return `data:image/${number}`;
+            };
+
+            const replaceImage = (text) => {
+                let result = text;
+                for (const number in images) {
+                    result = result.replace(imagePlaceholder(number), images[number])
+                }
+                return result;
+            };
+
             document.querySelector('textarea').addEventListener('keyup', (event) => {
-                document.querySelector('output').innerHTML = marked.parse(event.target.value);
+                document.querySelector('output').innerHTML = marked.parse(replaceImage(event.target.value));
+            });
+
+            document.addEventListener('paste', async (event) => {
+                for (const file of event.clipboardData.files) {
+                    if (!file.type.startsWith('image/')) {
+                        continue
+                    }
+
+                    event.preventDefault();
+
+                    const reader = new FileReader();
+
+                    reader.onloadend = () => {
+                        const $textarea = document.querySelector('textarea');
+
+                        const value = $textarea.value;
+                        const start = $textarea.selectionStart;
+
+                        const before = value.substr(0, start);
+                        const text = `![${file.name}](${imagePlaceholder(images.length)})`;
+                        const after = value.substr(start, value.length);
+
+                        $textarea.value = `${before}${text}${after}`;
+
+                        images.push(reader.result);
+                    };
+
+                    reader.readAsDataURL(file); 
+                }
             });
         </script>
     </body>
