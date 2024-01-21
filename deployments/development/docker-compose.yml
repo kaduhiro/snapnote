@@ -1,0 +1,23 @@
+version: '3.8'
+
+x-network: &NETWORK
+  networks:
+    internal:
+
+networks:
+  internal:
+
+services:
+  html:
+    image: nginx:latest
+    container_name: $SERVICE-html
+    hostname: $SERVICE-html
+    <<: [*NETWORK]
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates
+      - ../../html:/usr/share/nginx/html
+    environment:
+      TZ: $TZ
+    working_dir: /usr/share/nginx/html
