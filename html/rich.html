@@ -421,6 +421,20 @@
   .main-panel > main > output .task-list-item label > * {
     min-width: 0;
   }
+  /* Make quotes match the body text size and span the full preview width. */
+  .main-panel > main > output blockquote {
+    box-sizing: border-box;
+    font-size: inherit;
+    margin: 0 0 16px;
+    max-width: none;
+    text-align: left;
+    width: 100%;
+  }
+  .main-panel > main > output blockquote > * {
+    font-size: inherit;
+    text-align: left;
+    max-width: none;
+  }
   .empty-hint {
     color: var(--color-text-muted);
     opacity: 0.6;
